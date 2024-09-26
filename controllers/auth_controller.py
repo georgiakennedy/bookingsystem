@@ -15,26 +15,37 @@ def register_user():
         body_data = request.get_json()
         # create an instance of the user model
         user = User(
-            name = body_data.get("name"),
-            email = body_data.get("email"),
-            mobile_number = body_data.get("mobile_number")
+            name=body_data.get("name"),
+            email=body_data.get("email"),
+            mobile_number=body_data.get("mobile_number")
         )
         # hash the password
         password = body_data.get("password")
         if password:
             user.password = bcrypt.generate_password_hash(password).decode("utf-8")
+        
         # add and commit to the DB
         db.session.add(user)
         db.session.commit()
+        
         # return acknowledgment
         return user_schema.dump(user), 201
     except IntegrityError as err:
+        # Check for NOT NULL violation
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
-            # not null violation
             return {"error": f"{err.orig.diag.column_name} is required."}, 400
+        
+        # Check for UNIQUE violation
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            #unique violation
-            return {"error": "Email address is already in use"}, 400
+            column_name = getattr(err.orig.diag, 'column_name', None)
+            if column_name:
+                if "mobile_number" in column_name:
+                    return {"error": "Mobile number is already in use."}, 400
+                elif "email" in column_name:
+                    return {"error": "Email address is already in use."}, 400
+                
+        # Handle unexpected errors
+        return {"error": "An unexpected error occurred."}, 500
 
 
 @auth_bp.route("/login", methods=["POST"])

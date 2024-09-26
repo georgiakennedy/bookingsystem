@@ -1,6 +1,7 @@
 from flask import Blueprint
 from init import db, bcrypt
 from models.user import User
+from models.employee import Employee
 
 db_commands = Blueprint("db", __name__)
 
@@ -28,7 +29,18 @@ def seed_tables():
         )
     ]
 
+    employee = [
+        Employee(
+            name = "Employee1"
+        ),
+        Employee(
+            name = "Employee2"
+        )
+    ]
+
+
     db.session.add_all(users)
+    db.session.add_all(employee)
     db.session.commit()
     print("Tables seeded.")
 

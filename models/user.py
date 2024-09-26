@@ -9,7 +9,7 @@ class User(db.Model):
     name = db.Column(db.String(100))
     password = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
-    mobile_number = db.Column(db.BigInteger, nullable=False)
+    mobile_number = db.Column(db.BigInteger, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False)
 
 class UserSchema(ma.Schema):
