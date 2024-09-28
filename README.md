@@ -1,4 +1,4 @@
-# Project README
+# Grooming Booking System README
 
 ## Table of Contents
 
