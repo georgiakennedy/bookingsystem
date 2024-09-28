@@ -10,6 +10,23 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/register", methods=["POST"])
 def register_user():
+    """
+    Register a new user.
+
+    This endpoint responds to POST requests and expects JSON data
+    containing user details. It creates a new User instance, hashes
+    the password, and saves it to the database.
+
+    Request Body:
+        - name: The name of the user.
+        - email: The user's email address (must be unique).
+        - mobile_number: The user's mobile number (must be unique).
+        - password: The user's password.
+
+    Returns:
+        JSON response containing the newly created user data.
+        HTTP status code 201 if successful, or error messages if validation fails.
+    """
     try:
         # get the data from the body of the request
         body_data = request.get_json()
@@ -50,6 +67,21 @@ def register_user():
 
 @auth_bp.route("/login", methods=["POST"])
 def login_user():
+    """
+    Log in an existing user.
+
+    This endpoint responds to POST requests and expects JSON data
+    containing login credentials. It checks the user's email and 
+    password, and if valid, generates a JWT for authenticated access.
+
+    Request Body:
+        - email: The user's email address.
+        - password: The user's password.
+
+    Returns:
+        JSON response containing the user's email, admin status, and the JWT token.
+        HTTP status code 200 if successful, or an error message if login fails.
+    """
     # Get the data from the body of the request
     body_data = request.get_json()
     # Find the user in DB with that email address
